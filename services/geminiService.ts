@@ -2,12 +2,6 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import type { ScenarioCard } from '../types';
 
-if (!process.env.API_KEY) {
-  throw new Error("API_KEY environment variable not set");
-}
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 const simpleResponseSchema = {
   type: Type.OBJECT,
   properties: {
@@ -58,7 +52,12 @@ const complexResponseSchema = {
 };
 
 
-export const generateScenarios = async (theme: string, count: number): Promise<ScenarioCard[]> => {
+export const generateScenarios = async (theme: string, count: number, apiKey: string): Promise<ScenarioCard[]> => {
+  if (!apiKey) {
+    throw new Error("Gemini API key not provided.");
+  }
+  const ai = new GoogleGenAI({ apiKey });
+
   const themeName = theme.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
   const isComplex = theme === 'complex_conundrums';
