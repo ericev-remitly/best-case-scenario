@@ -7,6 +7,8 @@ interface ControlPanelProps {
   cardCounts: number[];
   selectedTheme: Theme;
   onThemeChange: (theme: Theme) => void;
+  customThemeText?: string;
+  onCustomThemeTextChange?: (text: string) => void;
   numCards: number;
   onNumCardsChange: (count: number) => void;
   onGenerate: () => void;
@@ -18,6 +20,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   cardCounts,
   selectedTheme,
   onThemeChange,
+  customThemeText,
+  onCustomThemeTextChange,
   numCards,
   onNumCardsChange,
   onGenerate,
@@ -35,6 +39,7 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   };
   
   const isComplexTheme = selectedTheme.value === 'complex_conundrums';
+  const isCustomTheme = selectedTheme.value === 'custom';
 
   return (
     <div className="sticky top-0 z-10 bg-slate-100/80 dark:bg-slate-900/80 backdrop-blur-md p-4 mb-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 animate-fade-in">
@@ -73,6 +78,22 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
             ))}
           </select>
         </div>
+
+        {/* Custom theme text input (visible when Custom is selected) */}
+        {isCustomTheme && (
+          <div className="w-full sm:w-auto">
+            <label htmlFor="custom-theme-input" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Custom Theme</label>
+            <input
+              id="custom-theme-input"
+              type="text"
+              value={customThemeText ?? ''}
+              onChange={(e) => onCustomThemeTextChange?.(e.target.value)}
+              placeholder="Describe your custom theme"
+              disabled={isLoading}
+              className="w-full px-3 py-2 text-base text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition disabled:opacity-50"
+            />
+          </div>
+        )}
 
         {/* Generate Button */}
         <div className="w-full sm:w-auto self-end">

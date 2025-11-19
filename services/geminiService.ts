@@ -12,7 +12,7 @@ const simpleResponseSchema = {
         properties: {
           scenario: {
             type: Type.STRING,
-            description: "A single, simple, positive, and feel-good scenario. It should be a short, direct statement.",
+            description: "A single, positive, interesting, and feel-good scenario. It should be a direct statement.",
           },
         },
         required: ["scenario"],
@@ -51,17 +51,21 @@ const complexResponseSchema = {
 };
 
 
-export const generateScenarios = async (theme: string, count: number): Promise<ScenarioCard[]> => {
+export const generateScenarios = async (themeKey: string, count: number, customText?: string): Promise<ScenarioCard[]> => {
   const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-  const themeName = theme.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  // If a custom text is provided, prefer that as the theme shown in prompts.
+  // Otherwise, convert the theme key (e.g., `workplace_wins`) to a human-friendly title.
+  const themeName = (customText && customText.trim().length > 0)
+    ? customText.trim()
+    : themeKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   
-  const isComplex = theme === 'complex_conundrums';
+  const isComplex = themeKey === 'complex_conundrums';
 
   const simplePrompt = `
     You are a creative assistant for a game called "Best-Case Scenario".
-    Your task is to generate exactly ${count} unique, simple, and direct positive scenarios based on the theme of "${themeName}".
-    Each scenario should be a short, single statement that describes a lucky, favorable, or fun outcome. The tone should be lighthearted, optimistic, and suitable for a fun team-building activity.
+    Your task is to generate exactly ${count} unique, interesting, and direct positive scenarios based on the theme of "${themeName}".
+    Each scenario should be a short, single statement that describes a lucky, interesting, favorable, or fun outcome. The tone should be lighthearted, optimistic, and suitable for a fun team-building activity.
     Think of them as small, delightful moments.
     Here are some examples of the style I'm looking for:
     - "Miss your bus, but get cast in a movie shooting on the street."
